@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>企业资料</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="modal fade" id="errModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    ERROR
+                </h4>
+            </div>
+            <div class="modal-body">
+                <span id="err_msg"></span>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="dashboard.html" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-lg"><b>Amz</b>招</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>Amazing</b>招聘</span>
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+
+            <div class="navbar-custom-menu" id="topMessage">
+                <ul class="nav navbar-nav">
+                    <!-- Messages: style can be found in dropdown.less-->
+                    <li class="dropdown messages-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-envelope-o"></i>
+                            <span class="label label-success">{{messageCount}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">您收到 {{messageCount}} 个消息</li>
+
+                            <li class="footer"><a href="friend.html">查看所有</a></li>
+                        </ul>
+                    </li>
+                    <!-- Notifications: style can be found in dropdown.less -->
+                    <li class="dropdown notifications-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="label label-warning">{{notificationCount}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">您收到 {{notificationCount}} 个通知</li>
+
+                            <li class="footer"><a href="notification.html">查看所有</a></li>
+                        </ul>
+                    </li>
+                    <!-- User Account: style can be found in dropdown.less -->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img :src="headerThumb" class="user-image" alt="User Image">
+                            <span class="hidden-xs">{{nickName}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img :src="headerThumb" class="img-circle" alt="User Image">
+
+                                <p>
+                                    {{nickName}}
+                                </p>
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="lock.html" class="btn btn-default btn-flat">锁屏</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="#" class="btn btn-default btn-flat" @click="logout">登出</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Control Sidebar Toggle Button -->
+                    <li>
+                        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- =============================================== -->
+
+    <!-- Left side column. contains the sidebar -->
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar" id="sidebarInfo">
+            <!-- Sidebar user panel -->
+            <div class="user-panel">
+                <div class="pull-left image">
+                    <img :src="headerThumb" class="img-circle" alt="User Image">
+                </div>
+                <div class="pull-left info">
+                    <p>{{nickName}}</p>
+                    <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                </div>
+            </div>
+            <!-- search form -->
+
+            <!-- /.search form -->
+            <!-- sidebar menu: : style can be found in sidebar.less -->
+            <template v-if="userType==1">
+                <ul class="sidebar-menu">
+                    <li class="header">主菜单</li>
+                    <li>
+                        <a href="dashboard.html">
+                            <i class="fa fa-dashboard"></i> <span>个人主页</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="search.html">
+                            <i class="fa fa-th"></i> <span>查找职位</span>
+                            <span class="pull-right-container">
+              <small class="label pull-right bg-green">Hot</small>
+            </span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-edit"></i> <span>设置</span>
+                            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="user_profile.html"><i class="fa fa-circle-o"></i>资料设置</a></li>
+                            <li><a href="resume_setting.html"><i class="fa fa-circle-o"></i>简历编辑</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="friend.html">
+                            <i class="fa fa-pie-chart"></i>
+                            <span>联系人</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-laptop"></i>
+                            <span>职位信息</span>
+                            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="focus_jobs.html"><i class="fa fa-circle-o"></i>关注的职位</a></li>
+                            <li><a href="post_jobs.html"><i class="fa fa-circle-o"></i>投递的职位</a></li>
+                            <li><a href="focus_enterprise.html"><i class="fa fa-circle-o"></i>关注的企业</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </template>
+            <template v-else-if="userType==2">
+                <ul class="sidebar-menu">
+                    <li class="header">主菜单</li>
+                    <li>
+                        <a href="dashboard.html">
+                            <i class="fa fa-dashboard"></i> <span>个人主页</span>
+                        </a>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-edit"></i> <span>设置</span>
+                            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="user_profile.html"><i class="fa fa-circle-o"></i>资料设置</a></li>
+                            <li><a href="enterprise_profile_setting.html"><i class="fa fa-circle-o"></i>企业资料编辑</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="friend.html">
+                            <i class="fa fa-pie-chart"></i>
+                            <span>联系人</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-laptop"></i>
+                            <span>职位管理</span>
+                            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="receive_resumes.html"><i class="fa fa-circle-o"></i>收到的简历</a></li>
+                            <li><a href="publish_jobs.html"><i class="fa fa-circle-o"></i>发布的职位</a></li>
+                            <li><a href="publish_new_job.html"><i class="fa fa-circle-o"></i>发布新职位</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </template>
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                企业资料
+            </h1>
+
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <!--row-->
+            <div class="row">
+                <!--col-->
+                <div class="col-md-5" id="imgsDiv">
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">介绍图</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                                <ol class="carousel-indicators">
+                                    <li data-target="#carousel-example-generic" class="active"></li>
+                                    <li v-for="img in imgs" data-target="#carousel-example-generic"></li>
+                                </ol>
+                                <div class="carousel-inner">
+                                    <div class="item active">
+                                        <img :src="firstImg">
+                                    </div>
+                                    <template v-for="img in imgs">
+                                        <div class="item ">
+                                            <img :src="img">
+                                        </div>
+                                    </template>
+                                </div>
+                                <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                                    <span class="fa fa-angle-left"></span>
+                                </a>
+                                <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                                    <span class="fa fa-angle-right"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <!-- Profile Image -->
+                    <div class="box box-primary">
+                        <div class="box-body box-profile" id="enterpriseDetailDiv">
+                            <a :href="url(enterpriseId)">
+                                <img class="profile-user-img img-responsive " :src="icon"
+                                     alt="User profile picture">
+                            </a>
+                            <a :href="url(enterpriseId)">
+                                <h3 class="profile-username text-center">{{name}}</h3>
+                            </a>
+                            <p class="text-muted text-center">{{location}}</p>
+
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <b>关注</b> <a class="pull-right">{{focusCount}}</a>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>在招职位</b> <a class="pull-right">{{jobsCount}}</a>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>电话</b> <a class="pull-right">{{telNum}}</a>
+                                </li>
+                            </ul>
+
+                            <a href="#" class="btn btn-primary btn-block" @click="focus(enterpriseId)"><b>关注</b></a>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+
+                </div>
+
+                <!--col-->
+                <div class="col-md-4" id="descriptionDiv">
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+
+                            <h3 class="box-title">公司简介</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body ">
+                            <div class="direct-chat-messages">
+                                <p class="lead">{{description}}</p>
+                            </div>
+
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+            </div>
+
+            <!--row-->
+            <div class="row">
+                <div class="col-md-8" id="publishJobs">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">在招职位</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body table-responsive no-padding">
+                            <table class="table table-hover">
+                                <tbody>
+                                <tr>
+                                    <th>招聘职位</th>
+                                    <th>招聘地点</th>
+                                    <th>发布日期</th>
+                                    <th>薪水</th>
+                                </tr>
+                                <template v-for="job in jobList">
+                                    <tr>
+                                        <td><a :href="url(job.jobId)">{{job.name}}</a></td>
+                                        <td>{{job.location}}</td>
+                                        <td>{{job.publishDate}}</td>
+                                        <td>{{job.salary}}</td>
+                                    </tr>
+                                </template>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+
+                <div class="col-md-4">
+
+                    <!-- Profile Image -->
+                    <div class="box box-primary">
+                        <div class="box-body box-profile" id="userProfile">
+                            <a :href="url(userId)">
+                                <img class="profile-user-img img-responsive img-circle" img :src="headerThumb"
+                                     alt="User profile picture">
+                            </a>
+                            <a :href="url(userId)">
+                                <h3 class="profile-username text-center">{{nickName}}</h3>
+                            </a>
+
+                            <p class="text-muted text-center">{{profession}}</p>
+
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <b>点赞</b> <a class="pull-right">{{praisesCount}}</a>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>好友</b> <a class="pull-right">{{friendsCount}}</a>
+                                </li>
+                            </ul>
+
+                            <a href="#" class="btn btn-primary btn-block" @click="praise"><b>点赞</b></a>
+                            <a href="#" class="btn btn-primary btn-block" @click="addFriend"><b>加好友</b></a>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+
+        </div>
+        <strong>Copyright &copy; 2016-2017 <a >353944088@qq.com</a>.</strong> All rights
+        reserved.
+    </footer>
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Create the tabs -->
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+            <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+
+
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- Home tab content -->
+            <div class="tab-pane" id="control-sidebar-home-tab">
+                <h3 class="control-sidebar-heading"></h3>
+                <ul class="control-sidebar-menu">
+                    <li>
+                        <a href="/offer/app/dashboard.html">
+                            <i class="menu-icon fa fa-user bg-yellow"></i>
+
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">返回个人主页</h4>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/offer/app/friend.html">
+                            <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">联系人</h4>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                <!-- /.control-sidebar-menu -->
+
+
+                <!-- /.control-sidebar-menu -->
+
+            </div>
+            <!-- /.tab-pane -->
+            <!-- Stats tab content -->
+            <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
+            <!-- /.tab-pane -->
+            <!-- Settings tab content -->
+
+            <!-- /.tab-pane -->
+        </div>
+    </aside>
+    <!-- /.control-sidebar -->
+    <!-- Add the sidebar's background. This div must be placed
+         immediately after the control sidebar -->
+    <div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 2.2.3 -->
+<script src="plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<!-- SlimScroll -->
+<script src="plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="plugins/fastclick/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/app.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="dist/js/demo.js"></script>
+<!--vue-->
+<script src="js/vue.js"></script>
+<!-- global -->
+<script src="js/global.js"></script>
+<!-- default -->
+<script src="js/default.js"></script>
+<!-- analyze -->
+<script src="js/analyze.js"></script>
+<!-- webSocket -->
+<script src="js/webSocket.js"></script>
+<!-- notification -->
+<script src="js/notification.js"></script>
+<script>
+    var enterpriseId = getQueryString("enterpriseId");
+    $.ajax({
+        method: 'GET',
+        url: baseWebServiceUrl + "/enterprise/job/publish/list",
+        cache: false,
+        data: {
+            'enterpriseId': enterpriseId
+        },
+        dataType: 'json',
+        success: function (data) {
+            if (preSuccess(data)) {
+                publishJobs.$set(publishJobs, "jobList", data['list'])
+            }
+        },
+        error: function (data) {
+
+        }
+    })
+    ;
+
+    $.ajax({
+        method: 'GET',
+        url: baseWebServiceUrl + "/enterprise/detail",
+        cache: false,
+        data: {
+            'enterpriseId': enterpriseId
+        },
+        dataType: 'json',
+        success: function (data) {
+            if (preSuccess(data)) {
+                var enterpriseDetailRes = data['detail'];
+                enterpriseDetailDiv.$set(enterpriseDetailDiv,
+                    'enterpriseId', enterpriseDetailRes['enterpriseId']);
+                enterpriseDetailDiv.$set(enterpriseDetailDiv,
+                    'location', enterpriseDetailRes['location']);
+                enterpriseDetailDiv.$set(enterpriseDetailDiv,
+                    'name', enterpriseDetailRes['name']);
+                enterpriseDetailDiv.$set(enterpriseDetailDiv,
+                    'icon', enterpriseDetailRes['icon']);
+                enterpriseDetailDiv.$set(enterpriseDetailDiv,
+                    'focusCount', enterpriseDetailRes['focusCount']);
+                enterpriseDetailDiv.$set(enterpriseDetailDiv,
+                    'jobsCount', enterpriseDetailRes['jobsCount']);
+                enterpriseDetailDiv.$set(enterpriseDetailDiv,
+                    'telNum', enterpriseDetailRes['telNum']);
+                descriptionDiv.$set(descriptionDiv,
+                    'description', enterpriseDetailRes['description']);
+                imgsDiv.$set(imgsDiv,
+                    'imgs', enterpriseDetailRes['introduceImages']);
+                imgsDiv.$set(imgsDiv,
+                    'firstImg', enterpriseDetailRes['firstImg']);
+                var userProfileDetailRes =
+                    enterpriseDetailRes['userProfileDetailRes'];
+
+                profile.$set(profile, "nickName", userProfileDetailRes["nickName"]);
+                profile.$set(profile, "headerThumb", userProfileDetailRes["headerThumb"]);
+                profile.$set(profile, "gender", userProfileDetailRes["gender"]);
+                profile.$set(profile, "praisesCount", userProfileDetailRes["praisesCount"]);
+                profile.$set(profile, "friendsCount", userProfileDetailRes["friendsCount"]);
+                profile.$set(profile, "userId", userProfileDetailRes["userId"]);
+
+            }
+        },
+        error: function (data) {
+
+        }
+    });
+
+    var publishJobs = new Vue({
+        el: '#publishJobs',
+        data: {
+            jobList: []
+        },
+        methods: {
+            url: function (id) {
+                return 'job_profile.html?jobId=' + id;
+            }
+        }
+    });
+    var enterpriseDetailDiv = new Vue({
+        el: "#enterpriseDetailDiv",
+        data: {
+            enterpriseId: 0,
+            location: '',
+            name: '',
+            icon: '',
+            focusCount: 0,
+            jobsCount: 0,
+            telNum: null
+        },
+        methods: {
+            focus: function (id) {
+                $.ajax({
+                    method: 'POST',
+                    url: baseWebServiceUrl + '/user/focus/enterprise',
+                    data: {
+                        'enterpriseId': id
+                    },
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+                        if (preSuccess(data)) {
+                            alertModal("关注成功", "SUCCESS");
+                            enterpriseDetailDiv.focusCount++;
+                        }
+                    },
+                    error: function (data) {
+
+                    }
+                });
+            },
+            url: function (id) {
+                return 'enterprise_profile.html?enterpriseId=' + id;
+            }
+        }
+    });
+
+    var descriptionDiv = new Vue({
+        el: "#descriptionDiv",
+        data: {
+            description: '',
+        }
+    });
+    var imgsDiv = new Vue({
+        el: '#imgsDiv',
+        data: {
+            firstImg: '',
+            imgs: []
+        },
+        methods: {
+            notEmpty: function () {
+                return firstImg != "";
+            }
+        }
+    });
+    var profile = new Vue({
+        el: '#userProfile',
+        data: {
+            userId: 0,
+            nickName: null,
+            headerThumb: null,
+            gender: 1,
+            profession: "Software Engineer",
+            praisesCount: 0,
+            friendsCount: 0
+        },
+        methods: {
+            url: function (id) {
+                return 'others_profile.html?userId=' + id;
+            },
+            addFriend: function () {
+
+                $.ajax({
+                    method: 'POST',
+                    url: baseWebServiceUrl + '/friend/add',
+                    data: {
+                        'userId': this.userId
+                    },
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+                        if (preSuccess(data)) {
+                            alertModal("已发送好友请求，请耐心等待", 'SUCCESS');
+                        }
+                    },
+                    error: function (data) {
+
+                    }
+                });
+
+            },
+            praise: function () {
+                $.ajax({
+                    method: 'POST',
+                    url: baseWebServiceUrl + '/user/praise',
+                    data: {
+                        'userId': this.userId
+                    },
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+                        if (preSuccess(data)) {
+                            alertModal("点赞成功", "SUCCESS");
+                            profile.praisesCount++;
+                        }
+                    },
+                    error: function (data) {
+
+                    }
+                });
+
+            }
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>发布新职位</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+    <!-- bootstrap datepicker -->
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker.css">
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="plugins/datepicker/datepicker3.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="modal fade" id="errModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    ERROR
+                </h4>
+            </div>
+            <div class="modal-body">
+                <span id="err_msg"></span>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<div class="wrapper">
+
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="dashboard.html" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-lg"><b>Amz</b>招</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>Amazing</b>招聘</span>
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+
+            <div class="navbar-custom-menu" id="topMessage">
+                <ul class="nav navbar-nav">
+                    <!-- Messages: style can be found in dropdown.less-->
+                    <li class="dropdown messages-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-envelope-o"></i>
+                            <span class="label label-success">{{messageCount}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">您收到 {{messageCount}} 个消息</li>
+
+                            <li class="footer"><a href="friend.html">查看所有</a></li>
+                        </ul>
+                    </li>
+                    <!-- Notifications: style can be found in dropdown.less -->
+                    <li class="dropdown notifications-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="label label-warning">{{notificationCount}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">您收到 {{notificationCount}} 个通知</li>
+
+                            <li class="footer"><a href="notification.html">查看所有</a></li>
+                        </ul>
+                    </li>
+                    <!-- User Account: style can be found in dropdown.less -->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img :src="headerThumb" class="user-image" alt="User Image">
+                            <span class="hidden-xs">{{nickName}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img :src="headerThumb" class="img-circle" alt="User Image">
+
+                                <p>
+                                    {{nickName}}
+                                </p>
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="lock.html" class="btn btn-default btn-flat">锁屏</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="#" class="btn btn-default btn-flat" @click="logout">登出</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Control Sidebar Toggle Button -->
+                    <li>
+                        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- =============================================== -->
+
+    <!-- Left side column. contains the sidebar -->
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar" id="sidebarInfo">
+            <!-- Sidebar user panel -->
+            <div class="user-panel">
+                <div class="pull-left image">
+                    <img :src="headerThumb" class="img-circle" alt="User Image">
+                </div>
+                <div class="pull-left info">
+                    <p>{{nickName}}</p>
+                    <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                </div>
+            </div>
+            <!-- search form -->
+
+            <!-- /.search form -->
+            <!-- sidebar menu: : style can be found in sidebar.less -->
+            <template v-if="userType==1">
+                <ul class="sidebar-menu">
+                    <li class="header">主菜单</li>
+                    <li>
+                        <a href="dashboard.html">
+                            <i class="fa fa-dashboard"></i> <span>个人主页</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="search.html">
+                            <i class="fa fa-th"></i> <span>查找职位</span>
+                            <span class="pull-right-container">
+              <small class="label pull-right bg-green">Hot</small>
+            </span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-edit"></i> <span>设置</span>
+                            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="user_profile.html"><i class="fa fa-circle-o"></i>资料设置</a></li>
+                            <li><a href="resume_setting.html"><i class="fa fa-circle-o"></i>简历编辑</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="friend.html">
+                            <i class="fa fa-pie-chart"></i>
+                            <span>联系人</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-laptop"></i>
+                            <span>职位信息</span>
+                            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="focus_jobs.html"><i class="fa fa-circle-o"></i>关注的职位</a></li>
+                            <li><a href="post_jobs.html"><i class="fa fa-circle-o"></i>投递的职位</a></li>
+                            <li><a href="focus_enterprise.html"><i class="fa fa-circle-o"></i>关注的企业</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </template>
+            <template v-else-if="userType==2">
+                <ul class="sidebar-menu">
+                    <li class="header">主菜单</li>
+                    <li>
+                        <a href="dashboard.html">
+                            <i class="fa fa-dashboard"></i> <span>个人主页</span>
+                        </a>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-edit"></i> <span>设置</span>
+                            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="user_profile.html"><i class="fa fa-circle-o"></i>资料设置</a></li>
+                            <li><a href="enterprise_profile_setting.html"><i class="fa fa-circle-o"></i>企业资料编辑</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="friend.html">
+                            <i class="fa fa-pie-chart"></i>
+                            <span>联系人</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-laptop"></i>
+                            <span>职位管理</span>
+                            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="receive_resumes.html"><i class="fa fa-circle-o"></i>收到的简历</a></li>
+                            <li><a href="publish_jobs.html"><i class="fa fa-circle-o"></i>发布的职位</a></li>
+                            <li><a href="publish_new_job.html"><i class="fa fa-circle-o"></i>发布新职位</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </template>
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                发布新职位
+            </h1>
+
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                        </div>
+
+                        <div class="box-body table-responsive no-padding">
+
+                            <div style="padding: 50px" id="jobSetting">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="inputName" class="col-sm-2 control-label">职位名字</label>
+
+                                        <div class="col-sm-10">
+                                            <input class="form-control" id="inputName" placeholder="职位名字"
+                                                   v-model="name">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">工作经验:</label>
+                                        <div class="col-sm-10">
+                                            <select id="experienceType" class="form-control select2"
+                                                    style="width: 100%;">
+                                                <option selected="selected" value="0">不限</option>
+                                                <option value="1">3年以下</option>
+                                                <option value="2">3-5年</option>
+                                                <option value="3">5-10年</option>
+                                                <option value="4">10年以上</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">地区:</label>
+                                        <div class="col-sm-10">
+                                            <select id="locationType" class="form-control select2"
+                                                    style="width: 100%;">
+                                                <option value="0">其他</option>
+                                                <option selected="selected" value="1">上海</option>
+                                                <option value="2">北京</option>
+                                                <option value="3">广州</option>
+                                                <option value="4">杭州</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">领域:</label>
+                                        <div class="col-sm-10">
+                                            <select id="fieldType" class="form-control select2"
+                                                    style="width: 100%;">
+                                                <option value="0">其他</option>
+                                                <option selected="selected" value="1">金融</option>
+                                                <option value="2">IT</option>
+                                                <option value="3">行政</option>
+                                                <option value="4">文娱</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">学历要求:</label>
+                                        <div class="col-sm-10">
+                                            <select id="educationType" class="form-control select2"
+                                                    style="width: 100%;">
+                                                <option selected="selected" value="0">不限</option>
+                                                <option value="1">大专</option>
+                                                <option value="2">本科</option>
+                                                <option value="3">硕士</option>
+                                                <option value="4">博士</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">具体地址</label>
+
+                                        <div class="col-sm-10">
+                                            <input class="form-control" placeholder="请输入具体招聘地址"
+                                                   v-model="location">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">薪水</label>
+
+                                        <div class="col-sm-8">
+                                            <input class="form-control" placeholder="薪水"
+                                                   v-model="salary">
+                                        </div>
+                                        <label class="col-sm-2">/月</label>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">职位描述</label>
+
+                                        <div class="col-sm-10">
+                                            <textarea class="form-control" placeholder="职位描述"
+                                                      v-model="description"></textarea>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button class="btn btn-success" @click="submit">发布</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- /.box -->
+                    <div class="box-footer">
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+
+        </div>
+        <strong>Copyright &copy; 2016-2017 <a >353944088@qq.com</a>.</strong> All rights
+        reserved.
+    </footer>
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Create the tabs -->
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+            <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- Home tab content -->
+            <div class="tab-pane" id="control-sidebar-home-tab">
+                <h3 class="control-sidebar-heading"></h3>
+                <ul class="control-sidebar-menu">
+                    <li>
+                        <a href="/offer/app/dashboard.html">
+                            <i class="menu-icon fa fa-user bg-yellow"></i>
+
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">返回个人主页</h4>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/offer/app/friend.html">
+                            <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">联系人</h4>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                <!-- /.control-sidebar-menu -->
+
+
+                <!-- /.control-sidebar-menu -->
+
+            </div>
+            <!-- /.tab-pane -->
+            <!-- Stats tab content -->
+            <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
+            <!-- /.tab-pane -->
+            <!-- Settings tab content -->
+
+            <!-- /.tab-pane -->
+        </div>
+    </aside>
+    <!-- /.control-sidebar -->
+    <!-- Add the sidebar's background. This div must be placed
+         immediately after the control sidebar -->
+    <div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 2.2.3 -->
+<script src="plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/app.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="dist/js/demo.js"></script>
+<!--vue-->
+<script src="js/vue.js"></script>
+<!--global-->
+<script src="js/global.js"></script>
+<!-- default -->
+<script src="js/default.js"></script>
+<!-- analyze -->
+<script src="js/analyze.js"></script>
+<!-- webSocket -->
+<script src="js/webSocket.js"></script>
+<!-- notification -->
+<script src="js/notification.js"></script>
+<script>
+
+
+    var jobSetting = new Vue({
+        data: {
+            name: '',
+            location: '',
+            salary: '',
+            description: '',
+        },
+        el: '#jobSetting',
+        methods: {
+            submit: function () {
+
+                var locationType = $("#locationType").val();
+                var educationType = $("#educationType").val();
+                var fieldType = $("#fieldType").val();
+                var experienceType = $("#experienceType").val();
+                $.ajax({
+                    "type": "POST",
+                    "url": baseWebServiceUrl + "/enterprise/me/job/publish",
+                    "cache": false,
+                    "dataType": "json",
+                    "data": {
+                        'name': this.name,
+                        'location': this.location,
+                        'salary': this.salary,
+                        'description': this.description,
+                        'locationType': locationType,
+                        'educationType': educationType,
+                        'fieldType': locationType,
+                        'experienceType': experienceType,
+                    },
+                    success: function (data) {
+                        if (preSuccess(data)) {
+                            alertModal("发布成功", "SUCCESS");
+                            var sleep = setTimeout(function () {
+                                window.location.href = 'publish_jobs.html';
+                            }, 2000);
+                        }
+
+                    },
+                    error: function () {
+
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

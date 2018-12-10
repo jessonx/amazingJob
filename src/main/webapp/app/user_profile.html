@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>用户资料</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+
+    <!--formdata-->
+    <link rel="stylesheet" href="qiniu/demo/styles/formdata.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="modal fade" id="errModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    ERROR
+                </h4>
+            </div>
+            <div class="modal-body">
+                <span id="err_msg"></span>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<div class="wrapper">
+
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="dashboard.html" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-lg"><b>Amz</b>招</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>Amazing</b>招聘</span>
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+
+            <div class="navbar-custom-menu" id="topMessage">
+                <ul class="nav navbar-nav">
+                    <!-- Messages: style can be found in dropdown.less-->
+                    <li class="dropdown messages-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-envelope-o"></i>
+                            <span class="label label-success">{{messageCount}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">您收到 {{messageCount}} 个消息</li>
+
+                            <li class="footer"><a href="friend.html">查看所有</a></li>
+                        </ul>
+                    </li>
+                    <!-- Notifications: style can be found in dropdown.less -->
+                    <li class="dropdown notifications-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="label label-warning">{{notificationCount}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">您收到 {{notificationCount}} 个通知</li>
+
+                            <li class="footer"><a href="notification.html">查看所有</a></li>
+                        </ul>
+                    </li>
+                    <!-- User Account: style can be found in dropdown.less -->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img :src="headerThumb" class="user-image" alt="User Image">
+                            <span class="hidden-xs">{{nickName}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img :src="headerThumb" class="img-circle" alt="User Image">
+
+                                <p>
+                                    {{nickName}}
+                                </p>
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="lock.html" class="btn btn-default btn-flat">锁屏</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="#" class="btn btn-default btn-flat" @click="logout">登出</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Control Sidebar Toggle Button -->
+                    <li>
+                        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- =============================================== -->
+
+    <!-- Left side column. contains the sidebar -->
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar" id="sidebarInfo">
+            <!-- Sidebar user panel -->
+            <div class="user-panel">
+                <div class="pull-left image">
+                    <img :src="headerThumb" class="img-circle" alt="User Image">
+                </div>
+                <div class="pull-left info">
+                    <p>{{nickName}}</p>
+                    <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                </div>
+            </div>
+            <!-- search form -->
+
+            <!-- /.search form -->
+            <!-- sidebar menu: : style can be found in sidebar.less -->
+            <template v-if="userType==1">
+                <ul class="sidebar-menu">
+                    <li class="header">主菜单</li>
+                    <li>
+                        <a href="dashboard.html">
+                            <i class="fa fa-dashboard"></i> <span>个人主页</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="search.html">
+                            <i class="fa fa-th"></i> <span>查找职位</span>
+                            <span class="pull-right-container">
+              <small class="label pull-right bg-green">Hot</small>
+            </span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-edit"></i> <span>设置</span>
+                            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="user_profile.html"><i class="fa fa-circle-o"></i>资料设置</a></li>
+                            <li><a href="resume_setting.html"><i class="fa fa-circle-o"></i>简历编辑</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="friend.html">
+                            <i class="fa fa-pie-chart"></i>
+                            <span>联系人</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-laptop"></i>
+                            <span>职位信息</span>
+                            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="focus_jobs.html"><i class="fa fa-circle-o"></i>关注的职位</a></li>
+                            <li><a href="post_jobs.html"><i class="fa fa-circle-o"></i>投递的职位</a></li>
+                            <li><a href="focus_enterprise.html"><i class="fa fa-circle-o"></i>关注的企业</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </template>
+            <template v-else-if="userType==2">
+                <ul class="sidebar-menu">
+                    <li class="header">主菜单</li>
+                    <li>
+                        <a href="dashboard.html">
+                            <i class="fa fa-dashboard"></i> <span>个人主页</span>
+                        </a>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-edit"></i> <span>设置</span>
+                            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="user_profile.html"><i class="fa fa-circle-o"></i>资料设置</a></li>
+                            <li><a href="enterprise_profile_setting.html"><i class="fa fa-circle-o"></i>企业资料编辑</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="friend.html">
+                            <i class="fa fa-pie-chart"></i>
+                            <span>联系人</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-laptop"></i>
+                            <span>职位管理</span>
+                            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="receive_resumes.html"><i class="fa fa-circle-o"></i>收到的简历</a></li>
+                            <li><a href="publish_jobs.html"><i class="fa fa-circle-o"></i>发布的职位</a></li>
+                            <li><a href="publish_new_job.html"><i class="fa fa-circle-o"></i>发布新职位</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </template>
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                编辑 资料
+            </h1>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+
+            <div class="row">
+                <div class="col-md-3">
+
+                    <!-- Profile Image -->
+                    <div class="box box-primary">
+                        <div class="box-body box-profile" id="userProfile">
+                            <img class="profile-user-img img-responsive img-circle" :src="headerThumb"
+                                 alt="User profile picture">
+
+                            <h3 class="profile-username text-center">{{nickName}}</h3>
+
+                            <p class="text-muted text-center">{{profession}}</p>
+
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <b>点赞</b> <a class="pull-right">{{praisesCount}}</a>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>好友</b> <a class="pull-right">{{friendsCount}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+
+                    <!-- About Me Box -->
+                    <div class="box box-primary" id="detail">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">关于我</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <strong><i class="fa fa-book margin-r-5"></i> 教育经历</strong>
+
+                            <p class="text-muted">{{education}}</p>
+
+                            <hr>
+
+                            <strong><i class="fa fa-map-marker margin-r-5"></i> 位置</strong>
+
+                            <p class="text-muted">{{location}}</p>
+
+                            <hr>
+
+                            <strong><i class="fa fa-pencil margin-r-5"></i> 技能</strong>
+
+                            <p>
+                                <template v-for="skill in skills">
+                                    <span class="label label-info">{{skill.labelName}}</span>
+                                    <br/>
+                                    <br/>
+                                </template>
+                            </p>
+
+                            <hr>
+
+                            <strong><i class="fa fa-file-text-o margin-r-5"></i> 简介</strong>
+
+                            <p>{{description}}</p>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-9">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#settings" data-toggle="tab">Settings</a></li>
+                        </ul>
+                        <div class="tab-content" id="profileSetting">
+                            <div class="active tab-pane" id="settings">
+                                <div class="form-group">
+                                    <label for="inputName" class="col-sm-2 control-label">上传头像</label>
+                                    <div class="col-sm-10">
+                                        <div class="container">
+                                            <!-- Document：https://developer.qiniu.com/kodo/manual/form-upload -->
+                                            <form id="testform" method="post" enctype="multipart/form-data">
+                                                <input name="key" id="key" type="hidden" value="">
+                                                <input id="token" name="token" type="hidden" value="">
+                                                <input id="userfile" name="file" type="file" accept="image/*"/>
+                                                <input name="accept" type="hidden"/>
+                                            </form>
+
+                                            <!-- add file -->
+                                            <label class="file" for="userfile">
+                                                <span class="fileSpan"></span>
+                                                <em class="fileEm"><a class="btn btn-success ">添加文件</a></em>
+                                            </label>
+                                        </div>
+
+                                        <img :src="headerThumb"
+                                             style="width: 80px;height: 80px;border-radius: 50%; display: none"
+                                             id="headerThumb">
+                                    </div>
+                                </div>
+
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="inputName" class="col-sm-2 control-label">昵称</label>
+
+                                        <div class="col-sm-10">
+                                            <input class="form-control" id="inputName" placeholder="昵称"
+                                                   v-model="nickName">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+
+                                        <label class="col-sm-2 control-label">性别</label>
+                                        <div class="col-sm-10">
+                                            <label>
+                                                <input type="radio" name="gender" class="flat-red" v-model="gender"
+                                                       value="1"> &nbsp;男 &nbsp;
+                                            </label>
+                                            <label>
+                                                <input type="radio" name="gender" class="flat-red" v-model="gender"
+                                                       value="2"> &nbsp;女
+                                                &nbsp;
+                                            </label>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label for="description" class="col-sm-2 control-label">个性签名</label>
+
+                                        <div class="col-sm-10">
+                        <textarea class="form-control" id="description" placeholder="个性签名（0-150字）"
+                                  v-model="description"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="education" class="col-sm-2 control-label">教育经历</label>
+
+                                        <div class="col-sm-10">
+                        <textarea class="form-control" id="education" placeholder="教育经历（0-150字）"
+                                  v-model="education"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="location" class="col-sm-2 control-label">位置</label>
+
+                                        <div class="col-sm-10">
+                        <textarea class="form-control" id="location" placeholder="当前所在位置"
+                                  v-model="location"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputSkills" class="col-sm-2 control-label">技能</label>
+
+                                        <div class="col-sm-10">
+                                            <div class="input-group input-group-sm ">
+                                                <input type="text" class="form-control" id="inputSkills"
+                                                       v-model.trim="labelName">
+                                                <span class="input-group-btn">
+                      <button type="button" class="btn btn-info btn-flat"
+                              @click="addSkillLabel">添加技能</button>
+                    </span>
+                                            </div>
+                                            <br/>
+
+                                            <p>
+                                                <template v-for="skill in skills">
+                                <span class="label label-info">{{skill.labelName}}
+                                <button type="button" class="btn btn-box-tool" data-widget="remove"
+                                        @click="delSkillLabel(skill.labelNum)">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </span>
+                                                    <br/>
+                                                </template>
+                                            </p>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button class="btn btn-danger" @click="submit">Submit</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.tab-pane -->
+                        </div>
+                        <!-- /.tab-content -->
+                    </div>
+                    <!-- /.nav-tabs-custom -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+
+        </div>
+        <strong>Copyright &copy; 2016-2017 <a >353944088@qq.com</a>.</strong> All rights
+        reserved.
+    </footer>
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Create the tabs -->
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+            <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- Home tab content -->
+            <div class="tab-pane" id="control-sidebar-home-tab">
+                <h3 class="control-sidebar-heading"></h3>
+                <ul class="control-sidebar-menu">
+                    <li>
+                        <a href="/offer/app/dashboard.html">
+                            <i class="menu-icon fa fa-user bg-yellow"></i>
+
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">返回个人主页</h4>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/offer/app/friend.html">
+                            <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">联系人</h4>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                <!-- /.control-sidebar-menu -->
+
+
+                <!-- /.control-sidebar-menu -->
+
+            </div>
+            <!-- /.tab-pane -->
+            <!-- Stats tab content -->
+            <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
+            <!-- /.tab-pane -->
+            <!-- Settings tab content -->
+
+            <!-- /.tab-pane -->
+        </div>
+    </aside>
+    <!-- /.control-sidebar -->
+    <!-- Add the sidebar's background. This div must be placed
+         immediately after the control sidebar -->
+    <div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 2.2.3 -->
+<script src="plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<!-- FastClick -->
+<script src="plugins/fastclick/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/app.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="dist/js/demo.js"></script>
+<!--vue-->
+<script src="js/vue.js"></script>
+<!--global-->
+<script src="js/global.js"></script>
+<!-- default -->
+<script src="js/default.js"></script>
+<!-- analyze -->
+<script src="js/analyze.js"></script>
+<!-- webSocket -->
+<script src="js/webSocket.js"></script>
+<!-- notification -->
+<script src="js/notification.js"></script>
+<script>
+
+    $.ajax({
+        'url': baseWebServiceUrl + "/user/me/profile/detail",
+        'dataType': 'json',
+        'method': 'GET',
+        'data': {},
+        'cache': false,
+        success: function (data) {
+            if (preSuccess(data)) {
+                var profileDetailRes = data['profileDetailRes'];
+                var userId = profileDetailRes['userId'];
+                var praisesCount = profileDetailRes['praisesCount'];
+                var friendsCount = profileDetailRes['friendsCount'];
+                var headerThumb = profileDetailRes['headerThumb'];
+                var gender = profileDetailRes['gender'];
+                var education = profileDetailRes['education'];
+                var location = profileDetailRes['location'];
+                var skills = profileDetailRes['skills'];
+                var description = profileDetailRes['description'];
+                var nickName = profileDetailRes['nickName'];
+                profile.$set(profile, "nickName", nickName);
+                profile.$set(profile, "headerThumb", headerThumb);
+                profile.$set(profile, "gender", gender);
+                profile.$set(profile, "praisesCount", praisesCount);
+                profile.$set(profile, "friendsCount", friendsCount);
+
+                detail.$set(detail, "education", education);
+                detail.$set(detail, "location", location);
+                detail.$set(detail, "skills", skills);
+                detail.$set(detail, "description", description);
+
+                profileSetting.$set(profileSetting, "nickName", nickName);
+                profileSetting.$set(profileSetting, "headerThumb", headerThumb);
+                profileSetting.$set(profileSetting, "gender", gender);
+                profileSetting.$set(profileSetting, "description", description);
+                profileSetting.$set(profileSetting, "education", education);
+                profileSetting.$set(profileSetting, "skills", skills);
+                profileSetting.$set(profileSetting, "location", location);
+            }
+        },
+        error: function (data) {
+
+        }
+
+    });
+    var profile = new Vue({
+        el: '#userProfile',
+        data: {
+            nickName: null,
+            headerThumb: null,
+            gender: 1,
+            profession: "Software Engineer",
+            praisesCount: 0,
+            friendsCount: 0
+        }
+    });
+    var detail = new Vue({
+        el: '#detail',
+        data: {
+            education: null,
+            location: null,
+            skills: [],
+            description: null
+        }
+    });
+
+    var profileSetting = new Vue({
+        el: '#profileSetting',
+        data: {
+            nickName: null,
+            headerThumb: null,
+            gender: 1,
+            description: null,
+            education: null,
+            location: null,
+            skills: [],
+            labelName: null,
+            err_msg: null
+        },
+        methods: {
+            addSkillLabel: function () {
+                var name = this.labelName;
+                var success = true;
+                if (name != null && name != '') {
+                    //添加标签
+                    $.ajax({
+                        "type": "POST",
+                        "url": baseWebServiceUrl + "/user/label/add",
+                        "cache": false,
+                        "dataType": "json",
+                        "data": {
+                            'labelName': this.labelName,
+                        },
+                        success: function (data) {
+                            if (preSuccess(data)) {
+                                //成功返回id+name
+                                var labelNum = data['label']['labelNum'];
+                                var labelName = data['label']['labelName'];
+                                var addSkill = new Skill(labelNum, labelName);
+                                //增加到页面中
+                                profileSetting.skills.push(addSkill);
+                                //清空输入
+                                profileSetting.labelName = null;
+                            }
+                        },
+                        error: function () {
+                            this.err_msg = "网络未连接";
+                            alert("网络未连接");
+                        }
+                    })
+                }
+            }
+            ,
+
+            delSkillLabel: function (id) {
+                //删除标签
+                $.ajax({
+                    "type": "POST",
+                    "url": baseWebServiceUrl + "/user/label/delete",
+                    "cache": false,
+                    "dataType": "json",
+                    "data": {
+                        'labelNum': id,
+                    },
+                    success: function (data) {
+                        if (preSuccess(data)) {
+                            //页面中删除
+                            profileSetting.skills = profileSetting.skills.filter(function (skill) {
+                                return skill.labelNum != id;
+                            })
+                        }
+                    },
+                    error: function () {
+                        this.err_msg = "网络未连接";
+                    }
+                })
+            }
+            ,
+            submit: function () {
+                //完善资料
+                $.ajax({
+                    "type": "POST",
+                    "url": baseWebServiceUrl + "/user/me/profile/set",
+                    "cache": false,
+                    "dataType": "json",
+                    "data": {
+                        'headerThumb': this.headerThumb,
+                        'nickName': this.nickName,
+                        'gender': this.gender,
+                        'description': this.description,
+                        'education': this.education,
+                        'location': this.location
+                    },
+                    success: function (data) {
+                        if (preSuccess(data)) {
+//                            跳转user_profile
+                            window.location.href = 'user_profile.html';
+                        }
+                    },
+                    error: function () {
+                        this.err_msg = "网络未连接";
+                    }
+                })
+            }
+        }
+    });
+
+
+    //    var upload = function () {
+    //        var imgPath = $("#headThumb").val();
+    //        if (imgPath == "") {
+    //            alert("请选择上传图片！");
+    //            return;
+    //        }
+    //        //判断上传文件的后缀名
+    //        var strExtension = imgPath.substr(imgPath.lastIndexOf('.') + 1);
+    //        if (strExtension != 'jpg' && strExtension != 'gif'
+    //                && strExtension != 'png' && strExtension != 'bmp') {
+    //            alert("请选择图片文件");
+    //            return;
+    //        }
+    //        $.ajax({
+    //            type: "POST",
+    //            url: baseUrl + "/upload/headerThumb",
+    //            data: new FormData($("#headerThumbForm")[0]),
+    //            processData: false,
+    //            contentType: false
+    //        }).done(function (data) {
+    //            if (preSuccess(data)) {
+    //                profileSetting.$set(profileSetting, 'headerThumb', data);
+    //                alertModal("上传成功");
+    //            }
+    //        }).fail(function (data) {
+    //
+    //        });
+    //    }
+
+    var domain = null;
+    var style = null;
+    $.ajax({
+        "type": "GET",
+        "url": baseWebServiceUrl + "/system/uploadToken",
+        "cache": false,
+        "dataType": "json",
+        success: function (data) {
+            if (preSuccess(data)) {
+                //页面中删除
+                var res = data['res'];
+                domain = res['domain'];
+                $('#token').val(res['token']);
+                style = res['style']
+            }
+        },
+        error: function () {
+            this.err_msg = "网络未连接";
+        }
+    })
+    ;
+    // jQuery zepto vue angular 等库皆有 progress 的实现 以jQuery为例：
+
+
+    $(function () {
+        var $key = $('#key');  // file name    eg: the file is image.jpg,but $key='a.jpg', you will upload the file named 'a.jpg'
+        var $userfile = $('#userfile');  // the file you selected
+
+        // upload info
+        var $selectedFile = $('.selected-file');
+        var $uploadedResult = $('.uploaded-result');
+
+        $("#userfile").change(function () {  // you can ues 'onchange' here to uplpad automatically after select a file
+            $uploadedResult.html('');
+            var selectedFile = $userfile.val();
+            if (selectedFile) {
+                // randomly generate the final file name
+                var ramdomName = Math.random().toString(36).substr(2) + $userfile.val().match(/\.?[^.\/]+$/);
+                $key.val(ramdomName);
+                $selectedFile.html('文件：' + selectedFile);
+            } else {
+                return false;
+            }
+            var f = new FormData(document.getElementById("testform"));
+            $.ajax({
+                url: 'http://up-z2.qiniu.com/',  // Different bucket zone has different upload url, you can get right url by the browser error massage when uploading a file with wrong upload url.
+                type: 'POST',
+                data: f,
+                processData: false,
+                contentType: false,
+                xhr: function () {
+                    myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) {
+                        myXhr.upload.addEventListener('progress', function (e) {
+                            console.log(e);
+                        }, false);
+                    }
+                    return myXhr;
+                },
+                success: function (res) {
+                    console.log("成功：" + JSON.stringify(res));
+                    var url = domain + res.key + style;
+                    alertModal("上传成功", "SUCCESS");
+                    $("#headerThumb").show();
+                    profileSetting.$set(profileSetting, 'headerThumb', url);
+                },
+                error: function (res) {
+                    alertModal("失败:" + JSON.stringify(res), "ERROR");
+                }
+            });
+            return false;
+        });
+    });
+
+</script>
+</body>
+</html>

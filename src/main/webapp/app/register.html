@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>注册</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+    <!-- iCheck -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body class="hold-transition register-page">
+<div class="modal fade" id="errModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    ERROR
+                </h4>
+            </div>
+            <div class="modal-body">
+                <span id="err_msg"></span>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<div class="register-box">
+    <div class="register-logo">
+        <a href=""><b>Admin</b>LTE</a>
+    </div>
+    <div class="register-box-body">
+        <p class="login-box-msg">申请账号</p>
+
+        <div action="/offer/security/register" method="post" id="form">
+            <p>{{err_msg}}</p>
+
+            <div class="form-group has-feedback">
+                <input type="text" class="form-control" placeholder="昵称" v-model="nickName">
+                <span class="glyphicon glyphicon-user form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="email" class="form-control" placeholder="邮箱" v-model="token">
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" class="form-control" placeholder="密码" v-model="password">
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" class="form-control" placeholder="确认密码" v-model="confirmedPassword">
+                <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <div class="col-xs-8">
+
+                    <input type="checkbox" id="checkbox" v-model="isEnterprise">
+                    <label for="checkbox">我是企业用户</a>
+                    </label>
+                </div>
+                <!-- /.col -->
+                <div class="col-xs-4">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat" id="submit" @click="submit">注册
+                    </button>
+                </div>
+                <!-- /.col -->
+            </div>
+        </div>
+
+
+        <a href="login.html" class="text-center">我已经申请了账号</a>
+    </div>
+    <!-- /.form-box -->
+</div>
+<!-- /.register-box -->
+
+<!-- jQuery 2.2.3 -->
+<script src="plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<!-- vue -->
+<script src="js/vue.js"></script>
+<!-- global -->
+<script src="js/global.js"></script>
+<!-- md5 -->
+<script src="js/md5.js"></script>
+<script>
+    var vm = new Vue({
+        data: {
+            nickName: null,
+            token: null,
+            password: null,
+            confirmedPassword: null,
+            isEnterprise: false,
+            err_msg: null
+        },
+        el: '#form',
+        methods: {
+            submit: function () {
+                this.err_msg = null;
+                if (this.token == null || this.password == null) {
+                    alertModal("请先输入完整数据", "WARN");
+                    return;
+                }
+                if (this.password != this.confirmedPassword) {
+                    this.err_msg = "两次密码输入不一致"
+                    return;
+                }
+                var userType = 0;
+                if (this.isEnterprise) {
+                    userType = 2;
+                } else {
+                    userType = 1;
+                }
+                var password = hex_md5(this.password);
+                $.ajax({
+                    "type": "POST",
+                    "url": baseWebServiceUrl + "/security/register",
+                    "cache": false,
+                    "dataType": "json",
+                    "data": {
+                        'nickName': this.nickName,
+                        'token': this.token,
+                        'password': password,
+                        'userType': userType
+                    },
+                    success: function (data) {
+                        if (preSuccess(data)) {
+//                            跳转至完善资料
+                            delCookie("lock");
+                            window.location.href = 'complete_user.html';
+                        }
+                    },
+                    error: function () {
+                        this.err_msg = "网络未连接";
+                    }
+                });
+            }
+        }
+
+    })
+</script>
+</body>
+</html>

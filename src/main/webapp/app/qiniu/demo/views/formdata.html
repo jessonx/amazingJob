@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>七牛云 - formdata 上传 demo</title>
+    <link rel="stylesheet" href="../styles/formdata.css">
+    <script src="../../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="../scripts/formdata.js"></script>
+    <script>
+        var domain = "http://onxm1cexj.bkt.clouddn.com/"; // you bucket domain  eg: http://xxx.bkt.clouddn.com
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="title">Formdata 上传 demo</div>
+
+    <!-- Document：https://developer.qiniu.com/kodo/manual/form-upload -->
+    <form id="testform" method="post" enctype="multipart/form-data">
+        <input name="key" id="key" type="hidden" value="">
+        <input name="token" type="hidden" value="Rgqy6bSIGYeyoiQFR4DKumMCJylaSGLzLK8mVIHH:nBk5naVzIZyfi3crp6MisngeUE4=:eyJzY29wZSI6ImpvYi1vZmZlci1zeXN0ZW0iLCJkZWFkbGluZSI6MTQ5MTU3Mjk5OX0=">
+        <input id="userfile" name="file" type="file"/>
+
+        <!-- take photo with phone -->
+        <!-- <input id="userfile" name="file" accept="image/*" type="file" /> -->
+
+        <!-- take video with phone -->
+        <!-- <input id="userfile" name="file" type="file" accept="video/*"/> -->
+
+        <input name="accept" type="hidden"/>
+    </form>
+
+    <!-- add file -->
+    <label class="file" for="userfile">
+        <span class="fileSpan"></span>
+        <em class="fileEm"><a>添加文件</a></em>
+    </label>
+
+    <!-- upload info -->
+    <div class="selected-file"></div>
+    <div class="progress"></div>
+    <div class="uploaded-result"></div>
+</div>
+</body>
+</html>
